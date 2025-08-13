@@ -11,5 +11,14 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.get("/", async (req, res) => {
+    try {
+        const allTracks = await Track.find();
+        res.status(200).json(allTracks);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
 
 module.exports = router;
