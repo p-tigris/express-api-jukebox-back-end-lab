@@ -25,8 +25,7 @@ router.get("/:trackId", async (req, res) => {
         const specificTrack = await Track.findById(req.params.trackId);
 
         if (!specificTrack) {
-            res.status(404);
-            throw new Error("Track not found.");
+            res.status(404).json({ error: "Track not found."});
         }
 
         res.status(200).json(specificTrack);
@@ -45,13 +44,30 @@ router.delete("/:trackId", async (req, res) => {
         const specificTrack = await Track.findByIdAndDelete(req.params.trackId);
 
         if (!specificTrack) {
-            res.status(404);
-            throw new Error("Track not found.");
+            res.status(404).json({ error: "Track not found." });
         }
 
         res.status(200).json(specificTrack);
 
-    } catch {
+    } catch (error) {
+        if (res.statusCode === 404) {
+            res.json({ error: error.message });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
+    }
+})
+
+router.put("/:trackId", async (req, res) => {
+    try {
+        const specificTrack = await Track.findByIdAndUpdate(req.params.trackId, req.body, { new: true });
+
+        if (!specificTrack) {
+            res.status(404).json({ error: "Track not found." });
+        }
+
+        res.status(200).json(specificTrack);
+    } catch (error) {
         if (res.statusCode === 404) {
             res.json({ error: error.message });
         } else {
